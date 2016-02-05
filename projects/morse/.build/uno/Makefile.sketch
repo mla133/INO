@@ -1,0 +1,14 @@
+
+
+
+
+
+.build/uno/src/morse.cpp : src/morse.ino
+	@mkdir -p .build/uno/src
+	@echo [93msrc/morse.ino[0m
+	@/home/local/FMCNET/allenma/bin/ino preproc  -o $@ $^
+
+
+all : .build/uno/src/morse.cpp
+	@true
+

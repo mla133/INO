@@ -1,0 +1,14 @@
+
+
+
+
+
+.build/uno/src/drawNumber.cpp : src/drawNumber.ino
+	@mkdir -p .build/uno/src
+	@echo [93msrc/drawNumber.ino[0m
+	@/home/local/FMCNET/allenma/bin/ino preproc  -o $@ $^
+
+
+all : .build/uno/src/drawNumber.cpp
+	@true
+

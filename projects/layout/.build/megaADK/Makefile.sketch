@@ -1,0 +1,14 @@
+
+
+
+
+
+.build/megaADK/src/layout.cpp : src/layout.ino
+	@mkdir -p .build/megaADK/src
+	@echo [93msrc/layout.ino[0m
+	@/home/local/FMCNET/allenma/bin/ino preproc  -o $@ $^
+
+
+all : .build/megaADK/src/layout.cpp
+	@true
+
