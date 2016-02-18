@@ -61,6 +61,18 @@ Flasher led9(80,  250, 10, GREEN, 100,0);
 Flasher led10(80, 280, 10, GREEN, 100,0);
 Flasher led11(80, 310, 10, GREEN, 100,0);
 
+Flasher led12(180, 10, 10, BLUE, 100,0);
+Flasher led13(180, 40, 10, BLUE, 100,0);
+Flasher led14(180, 70, 10, BLUE, 100,0);
+Flasher led15(180, 100, 10, BLUE, 100,0);
+Flasher led16(180, 130, 10, BLUE, 100,0);
+Flasher led17(180, 160, 10, BLUE, 100,0);
+Flasher led18(180, 190, 10, BLUE, 100,0);
+Flasher led19(180, 220, 10, BLUE, 100,0);
+Flasher led20(180, 250, 10, BLUE, 100,0);
+Flasher led21(180, 280, 10, BLUE, 100,0);
+Flasher led22(180, 310, 10, BLUE, 100,0);
+
 void setup()
 {
     TFT_BL_ON;                                      // turn on the background light
@@ -77,6 +89,18 @@ void setup()
     Tft.drawString("D09",0,240,3,WHITE);
     Tft.drawString("D10",0,270,3,WHITE);
     Tft.drawString("D11",0,300,3,WHITE);
+
+    Tft.drawString("D12",100,0,3,WHITE);
+    Tft.drawString("D13",100,30,3,WHITE);
+    Tft.drawString("D14",100,60,3,WHITE);
+    Tft.drawString("D15",100,90,3,WHITE);
+    Tft.drawString("D16",100,120,3,WHITE);
+    Tft.drawString("D17",100,150,3,WHITE);
+    Tft.drawString("D18",100,180,3,WHITE);
+    Tft.drawString("D19",100,210,3,WHITE);
+    Tft.drawString("D20",100,240,3,WHITE);
+    Tft.drawString("D21",100,270,3,WHITE);
+    Tft.drawString("D22",100,300,3,WHITE);
 }
 
 void loop()
@@ -92,4 +116,16 @@ void loop()
 	led9.Update();
 	led10.Update();
 	led11.Update();
+
+	led12.Update();
+	led13.Update();
+	led14.Update();
+	led15.Update();
+	led16.Update();
+	led17.Update();
+	led18.Update();
+	led19.Update();
+	led20.Update();
+	led21.Update();
+	led22.Update();
 }
