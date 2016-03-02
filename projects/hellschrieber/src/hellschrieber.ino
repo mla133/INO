@@ -1,6 +1,6 @@
 int radioPin = 13 ;
  
-typedef struct glyph {
+typedef const struct glyph {
     char ch ;
     word col[7] ;
 } Glyph ;
