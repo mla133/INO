@@ -1,5 +1,3 @@
-int radioPin = 13 ;
- 
 typedef const struct glyph {
     char ch ;
     word col[7] ;
@@ -54,6 +52,8 @@ Glyph glyphtab[] PROGMEM = {
 {'/', {0x001c, 0x0070, 0x01c0, 0x0700, 0x1c00, 0x0000, 0x0000}},
 } ;
  
+int radioPin = 13 ;
+
 #define NGLYPHS         (sizeof(glyphtab)/sizeof(glyphtab[0]))
  
 void
@@ -103,5 +103,5 @@ setup()
 void
 loop()
 {
-    encode("K6HX QTH CM87UX TMP 72F PWR 500 MICROWATTS ") ;
+    encode("KC3EYS QTH EN92XC TMP 72F PWR 500 MICROWATTS ") ;
 }
