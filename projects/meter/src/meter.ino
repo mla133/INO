@@ -8,21 +8,14 @@ uint32_t updateTime = 0;       // time for next update
 
 int old_analog =  -999; // Value last displayed
 int old_digital = -999; // Value last displayed
+int reading = 0;
 
 void setup()
 {
     TFT_BL_ON;                                      // turn on the background light
     Tft.TFTinit();                                  // init TFT library
 
-    //Tft.setRotation(2);
-
-    //Tft.fillScreen(BLACK);
-
     analogMeter(); // Draw analogue meter
-
-    //Tft.fillCircle(ledx,ledy,ledsize,ledc);
-    Tft.drawString("D01",0,0,3,WHITE);
-
     updateTime = millis(); // Next update time
 }
 
@@ -31,9 +24,8 @@ void loop()
   if (updateTime <= millis()) {
     updateTime = millis() + 500;
 
-    int reading = 0;
-    reading = random(-50, 151); // Test with random value
-    reading = map(analogRead(A0),0,1023,0,100); // Test with value form Analog 0
+    reading = random(25, 75); // Test with random value
+//    reading = map(analogRead(A8),0,1023,0,100); // Test with value form Analog 8
 
     plotNeedle(reading, 8); // Update analogue meter, 8ms delay per needle increment
     
@@ -48,8 +40,6 @@ void analogMeter()
   // Meter outline
   Tft.fillRectangle(0, 0, 239, 126, GRAY1);
   Tft.fillRectangle(5, 3, 230, 119, WHITE);
-  
-  //Tft.setTextColor(BLACK);  // Text colour
   
   // Draw ticks every 5 degrees from -50 to +50 degrees (100 deg. FSD swing)
   for (int i = -50; i < 51; i += 5) {
@@ -72,6 +62,8 @@ void analogMeter()
     int x3 = sx2 * 100 + 120;
     int y3 = sy2 * 100 + 140;
     
+    // Will need to import fillTriangle library function from AdaFruit-GFX library to get this to work
+
     // Yellow zone limits
     //if (i >= -50 && i < 0) {
     //  Tft.fillTriangle(x0, y0, x1, y1, x2, y2, YELLOW);
@@ -108,11 +100,11 @@ void analogMeter()
       x0 = sx * (100 + tl + 10) + 120;
       y0 = sy * (100 + tl + 10) + 140;
       switch (i / 25) {
-        case -2: Tft.drawString("0", x0, y0 - 12, 2,BLACK); break;
-        case -1: Tft.drawString("25", x0, y0 - 9, 2, BLACK); break;
-        case 0: Tft.drawString("50", x0, y0 - 6, 2, BLACK); break;
-        case 1: Tft.drawString("75", x0, y0 - 9, 2, BLACK); break;
-        case 2: Tft.drawString("100", x0, y0 - 12, 2, BLACK); break;
+        case -2: Tft.drawString("0", x0, y0 - 12, 1,BLACK); break;
+        case -1: Tft.drawString("25", x0, y0 - 9, 1, BLACK); break;
+        case 0: Tft.drawString("50", x0, y0 - 6, 1, BLACK); break;
+        case 1: Tft.drawString("75", x0, y0 - 9, 1, BLACK); break;
+        case 2: Tft.drawString("100", x0, y0 - 12, 1, BLACK); break;
       }
     }
     
@@ -125,8 +117,7 @@ void analogMeter()
     if (i < 50) Tft.drawLine(x0, y0, x1, y1, BLACK);
   }
   
-  Tft.drawString("%RH", 5 + 230 - 40, 119 - 20, 2, BLACK); // Units at bottom right
-  //Tft.drawCentreString("%RH", 120, 70, 4); // Comment out to avoid font 4
+  Tft.drawString("A8", 5 + 230 - 40, 119 - 20, 2, BLACK); // Units at bottom right
   Tft.drawRectangle(5, 3, 230, 119, BLACK); // Draw bezel line
   
   plotNeedle(0,0); // Put meter needle at 0
@@ -141,9 +132,7 @@ void analogMeter()
 // #########################################################################
 void plotNeedle(int value, byte ms_delay)
 {
-  //Tft.setTextColor(BLACK, WHITE);
   char buf[8]; dtostrf(value, 4, 0, buf);
-  //Tft.drawRightString(buf, 40, 119 - 20, 2);
 
   if (value < -10) value = -10; // Limit value to emulate needle end stops
   if (value > 110) value = 110;
@@ -168,10 +157,6 @@ void plotNeedle(int value, byte ms_delay)
     Tft.drawLine(120 + 20 * ltx, 140 - 20, osx, osy, WHITE);
     Tft.drawLine(120 + 20 * ltx + 1, 140 - 20, osx + 1, osy, WHITE);
     
-    // Re-plot text under needle
-    //Tft.setTextColor(BLACK);
-    //Tft.drawCentreString("%RH", 120, 70, 4); // // Comment out to avoid font 4
-    
     // Store new needle end coords for next erase
     ltx = tx;
     osx = sx * 98 + 120;
@@ -180,7 +165,7 @@ void plotNeedle(int value, byte ms_delay)
     // Draw the needle in the new postion, magenta makes needle a bit bolder
     // draws 3 lines to thicken needle
     Tft.drawLine(120 + 20 * ltx - 1, 140 - 20, osx - 1, osy, RED);
-    Tft.drawLine(120 + 20 * ltx, 140 - 20, osx, osy, BLUE);
+    Tft.drawLine(120 + 20 * ltx, 140 - 20, osx, osy, BRIGHT_RED);
     Tft.drawLine(120 + 20 * ltx + 1, 140 - 20, osx + 1, osy, RED);
     
     // Slow needle down slightly as it approaches new postion
