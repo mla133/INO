@@ -9,6 +9,7 @@ uint32_t updateTime = 0;       // time for next update
 int old_analog =  -999; // Value last displayed
 int old_digital = -999; // Value last displayed
 int reading = 0;
+float volts = 0;
 
 void setup()
 {
@@ -16,6 +17,9 @@ void setup()
     Tft.TFTinit();                                  // init TFT library
 
     analogMeter(); // Draw analogue meter
+
+    digitalMeter(); // Draw digital meter
+
     updateTime = millis(); // Next update time
 }
 
@@ -24,8 +28,13 @@ void loop()
   if (updateTime <= millis()) {
     updateTime = millis() + 500;
 
-    reading = random(25, 75); // Test with random value
-//    reading = map(analogRead(A8),0,1023,0,100); // Test with value form Analog 8
+//  reading = random(25, 75); // Test with random value
+    reading = map(analogRead(A8),0,1023,0,100); // Test with value form Analog 8
+
+    volts = (5*reading)/100;
+
+    //showDigital(reading);  // Update digital reading
+    showDigital(volts);  // Update digital reading
 
     plotNeedle(reading, 8); // Update analogue meter, 8ms delay per needle increment
     
@@ -100,11 +109,11 @@ void analogMeter()
       x0 = sx * (100 + tl + 10) + 120;
       y0 = sy * (100 + tl + 10) + 140;
       switch (i / 25) {
-        case -2: Tft.drawString("0", x0, y0 - 12, 1,BLACK); break;
-        case -1: Tft.drawString("25", x0, y0 - 9, 1, BLACK); break;
-        case 0: Tft.drawString("50", x0, y0 - 6, 1, BLACK); break;
-        case 1: Tft.drawString("75", x0, y0 - 9, 1, BLACK); break;
-        case 2: Tft.drawString("100", x0, y0 - 12, 1, BLACK); break;
+        case -2: Tft.drawString("0V", x0, y0 - 12, 1,BLACK); break;
+        case -1: Tft.drawString("1.25V", x0, y0 - 9, 1, BLACK); break;
+        case 0: Tft.drawString("2.5V", x0, y0 - 6, 1, BLACK); break;
+        case 1: Tft.drawString("3.75V", x0, y0 - 9, 1, BLACK); break;
+        case 2: Tft.drawString("5V", x0, y0 - 12, 1, BLACK); break;
       }
     }
     
@@ -174,4 +183,50 @@ void plotNeedle(int value, byte ms_delay)
     // Wait before next update
     delay(ms_delay);
   }
+}
+
+// #########################################################################
+// Draw 3 digit digital meter with faint 7 segment image
+// #########################################################################
+void digitalMeter()
+{
+  int xpos = 118, ypos = 134; // was 134
+  
+  Tft.fillRectangle(xpos - 52, ypos - 5, 2 * 54, 59, GRAY1);
+  Tft.fillRectangle(xpos - 49, ypos - 2, 2 * 51, 53, BLACK);
+  Tft.drawString("888", xpos - 48, ypos+1, 7, BLACK);
+}
+
+// #########################################################################
+// Update digital meter reading
+// #########################################################################
+void showDigital(int value)
+{
+  if (value==old_digital) return; // return if no change to prevent flicker
+  if (value < 0) value = 0; //Constrain lower limit to 0
+  if (value > 999) value = 999; //Constrain upper limit to 999
+  
+  int xpos = 118, ypos = 134+1; // Position with location tweak
+  Tft.fillRectangle(xpos - 47, ypos, xpos+100, ypos+100, BLACK); //Erase old value
+  
+  // Nb. 32 pixels wide +2 gap per digit
+  
+  // Update with new value
+  if (value < 10) Tft.drawNumber(value, xpos+19, ypos, 7, RED);
+  else if (value < 100) Tft.drawNumber(value, xpos - 14, ypos, 7, RED);
+  else Tft.drawNumber((long int) numToAscii(value), xpos - 47, ypos, 7, RED);
+  old_digital = value;
+}
+
+char* numToAscii(double num)
+{
+// Takes a floating or double precision number in, and returns an ascii string with up to 1/1000
+// precision
+	char ascii[32];
+	int frac;
+	frac=(unsigned int) (num*1000)%1000;  //get three numbers to the right of decimal
+	itoa((int)num,ascii,10);
+	strcat(ascii,".");
+	itoa(frac,&ascii[strlen(ascii)],10);  // put the frac after the decimal
+	return ascii;
 }
