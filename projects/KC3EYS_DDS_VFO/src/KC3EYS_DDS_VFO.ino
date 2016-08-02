@@ -58,6 +58,7 @@ void setup() {
 void loop() {
   if (rx != rx2){    
         sendFrequency(rx);
+	showFreq();
         rx2 = rx;
       }
 }
@@ -123,10 +124,10 @@ void showFreq(){
     //lcd.setCursor(0,0);
     lcd.write(12); delay(5);
     lcd.print("                ");
-//   if (millions > 9){lcd.setCursor(1,0);}
-   if (millions > 9){lcd.write(128);}
-//   else{lcd.setCursor(2,0);}
-   else{lcd.write(148);}
+   if (millions > 9){lcd.setCursor(0,1);}
+   //if (millions > 9){lcd.write(128);}
+   else{lcd.setCursor(0,2);}
+   //else{lcd.write(148);}
     lcd.print(millions);
     lcd.print(".");
     lcd.print(hundredthousands);

@@ -516,3 +516,13 @@ int SoftwareSerial::peek()
   // Read from "head"
   return _receive_buffer[_receive_buffer_head];
 }
+
+void SoftwareSerial::setCursor(uint8_t row, uint8_t col)
+{
+    int position;
+    if(row==0) position = 128;
+    else if (row==1) position = 148;
+    
+    position = position + col;
+    write(position);    
+}
