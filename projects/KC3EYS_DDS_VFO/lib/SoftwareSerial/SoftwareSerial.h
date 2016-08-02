@@ -93,6 +93,7 @@ public:
   virtual int read();
   virtual int available();
   virtual void flush();
+  virtual void write(uint8_t row, uint8_t col);
   
   using Print::write;
 
