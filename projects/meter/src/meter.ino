@@ -18,7 +18,7 @@ void setup()
 
     analogMeter(); // Draw analogue meter
 
-    digitalMeter(); // Draw digital meter
+    //digitalMeter(); // Draw digital meter
 
     updateTime = millis(); // Next update time
 }
@@ -31,10 +31,10 @@ void loop()
 //  reading = random(25, 75); // Test with random value
     reading = map(analogRead(A8),0,1023,0,100); // Test with value form Analog 8
 
-    volts = (5*reading)/100;
+    volts = (float)(5*reading)/100;
 
     //showDigital(reading);  // Update digital reading
-    showDigital(volts);  // Update digital reading
+    //showDigital(volts,0);  // Update digital reading
 
     plotNeedle(reading, 8); // Update analogue meter, 8ms delay per needle increment
     
@@ -71,25 +71,23 @@ void analogMeter()
     int x3 = sx2 * 100 + 120;
     int y3 = sy2 * 100 + 140;
     
-    // Will need to import fillTriangle library function from AdaFruit-GFX library to get this to work
-
-    // Yellow zone limits
-    //if (i >= -50 && i < 0) {
-    //  Tft.fillTriangle(x0, y0, x1, y1, x2, y2, YELLOW);
-    //  Tft.fillTriangle(x1, y1, x2, y2, x3, y3, YELLOW);
-    //}
-    
     // Green zone limits
-    //if (i >= 0 && i < 25) {
-    //  Tft.fillTriangle(x0, y0, x1, y1, x2, y2, GREEN);
-    // Tft.fillTriangle(x1, y1, x2, y2, x3, y3, GREEN);
-    //}
+    if (i >= -50 && i < 0) {
+      Tft.fillTriangle(x0, y0, x1, y1, x2, y2, GREEN);
+      Tft.fillTriangle(x1, y1, x2, y2, x3, y3, GREEN);
+    }
+    
+    // Yellow zone limits
+    if (i >= 0 && i < 25) {
+      Tft.fillTriangle(x0, y0, x1, y1, x2, y2, YELLOW);
+     Tft.fillTriangle(x1, y1, x2, y2, x3, y3, YELLOW);
+    }
 
     // Red zone limits
-    //if (i >= 25 && i < 50) {
-    //  Tft.fillTriangle(x0, y0, x1, y1, x2, y2, RED);
-    //  Tft.fillTriangle(x1, y1, x2, y2, x3, y3, RED);
-    //}
+    if (i >= 25 && i < 50) {
+      Tft.fillTriangle(x0, y0, x1, y1, x2, y2, RED);
+      Tft.fillTriangle(x1, y1, x2, y2, x3, y3, RED);
+    }
     
     // Short scale tick length
     if (i % 25 != 0) tl = 8;
@@ -200,7 +198,7 @@ void digitalMeter()
 // #########################################################################
 // Update digital meter reading
 // #########################################################################
-void showDigital(int value)
+void showDigital(float value, byte ms_delay)
 {
   if (value==old_digital) return; // return if no change to prevent flicker
   if (value < 0) value = 0; //Constrain lower limit to 0
@@ -210,12 +208,20 @@ void showDigital(int value)
   Tft.fillRectangle(xpos - 47, ypos, xpos+100, ypos+100, BLACK); //Erase old value
   
   // Nb. 32 pixels wide +2 gap per digit
+  if (ms_delay == 0) old_digital = value; // Update immediately if delay is 0
   
   // Update with new value
-  if (value < 10) Tft.drawNumber(value, xpos+19, ypos, 7, RED);
-  else if (value < 100) Tft.drawNumber(value, xpos - 14, ypos, 7, RED);
-  else Tft.drawNumber((long int) numToAscii(value), xpos - 47, ypos, 7, RED);
+  if (value < 10) Tft.drawFloat(value, xpos-54, ypos, 7, RED);
+  else if (value < 100) Tft.drawFloat(value, xpos - 14, ypos, 7, RED);
+  //else Tft.drawNumber((long int) numToAscii(value), xpos - 47, ypos, 7, RED);
+  else Tft.drawFloat(value, xpos-14, ypos, 7, RED);
   old_digital = value;
+  
+    // Slow display down slightly as it approaches new postion
+    if (abs(old_digital - value) < 10) ms_delay += ms_delay / 5;
+    
+    // Wait before next update
+    delay(ms_delay);
 }
 
 char* numToAscii(double num)
